@@ -4,7 +4,7 @@
  - *staking amount* - amount of WIK tokens that is necessary to stake, to raise a challenge or become an *editor*. Different sections can have different *staking amounts* associated with them. However, *staking amount* for a specific section is the same for all wiki pages. (e.g. abstract section has staking amount of 100 WIK accross all wiki pages)
  - *dispute period* - time period in which *maintainer* can dispute a *challenge*. Could be different for different sections. 
 	 
-** Actors in the system: ** 
+**Actors in the system:** 
  - ***editors*** - edit and update content. Anybody can become an *editor*, they lock WIK tokens.
 	 - *maintainer* - *editor* who is currently responsible for correctness of specific section. 
  - *challenger* - *editor* who challenges current *maintainer*
@@ -25,20 +25,33 @@ These are the behaviours that our mechanism needs to incentivize
 ### Wiki page structure & incentives
 
 Every wiki is divided into sections 
+
+#### example
+**project 1 wiki page**
+
+section-abstract
+section-tvl 
+section-tokenPrice 
+section-marketCap 
+section-tokenomics
+
+#### description
 There is always a rewards stream for every section of the wiki page. This stream goes to the *maintainer* who is the last *editor*  who successfully challenged the section content. This incentivizes editors to both:
 1. Make sure their content is always up to date and cannot be challenged.
 (if it is not and is challenged successfully the staking rewards from challanged section starts flowing to the challenger who effectively becomes the new editor for the specified section.)
-2. Incentivizes editors to look for mistakes / inconsistencies in contents of wiki pages. If they find it, they can challenge it and start receiving staking rewards themselves. 
+2. Incentivizes editors to look for mistakes / inconsistencies in sections of wiki pages. If they find any, they can challenge section and start receiving staking rewards themselves. 
 3. This mechanism lets editors specialize both horizontally or vertically
 	1. horizontal specialization
-		1. example
-			1. editor specializes in updating TVL for all defi projects by running a bot which pulls the data off the blockchain / website
+		- example
+			- editor specializes in updating TVL for all defi projects by running a bot which pulls the data from a blockchain / website
 	2. vertical specialization
-		1. editor specializes in updating specific wiki page, he is part of synthetix community, so knows all the newest info about new products, roadmap etc. 
+		- example
+		    - editor specializes in updating specific wiki page, he is part of some defi community, so knows all the newest info about new products, roadmap etc. 
 			
 
 			
-	### Token distribution
+### Token distribution
+There will be a WIK token, standard ERC20 token to create incentives.
 WIK tokens need to be initially distributed amongst large group of potential community members. Initial distribution of token needs to target communities various DeFi communities. The goal here is to get token into the hands of content creators(editors), voters and broader defi community potentially interested in consuming the content.   
 	
  Every actor who wants to actively participate in content creation or curation needs WIK token to participate. This is because every party needs to put up stake in order to participate to ensure good behaviour and have a threat of loss funds. 
@@ -52,51 +65,57 @@ WIK tokens need to be initially distributed amongst large group of potential com
 	-	Sections should be clearly defined in scope, if information belongs to a different section, it can and should be challenged
 	 
 ### Actions in the system
-1. Staking => *editor* can start staking and become *maintainer*, person responsible for the correctness of a specific section. He can do so by successfully challanging section content and locking appropriate *staking amount*. There is a revenue stream associated with every section which goes to the *maintainer*. Revenue stream for every section should be directly proportional to the locked stake that is required for its maintenence. However, different sections could have a different required stake. This can be necessary because certain sections need more maintanence(more frequent updates) than others. (TVL section vs project abstract). Staking terminates whenever there is a successful challange or when current *maintainer* decides to unstake. There is a time delay of 1 week after unstaking. This is so in order to allow anyone to challange the content and prevent editors from publishing bad content for which they cannot be punished. 
+1. Staking => *editor* can start staking and become *maintainer*, person responsible for the correctness of a specific section. He can do so by successfully challanging section content and locking appropriate *staking amount*. There is a revenue stream associated with every section which goes to the *maintainer*. Revenue stream for every section should be directly proportional to the locked stake that is required for its maintenence. However, different sections could have a different required stake. This can be necessary because certain sections need more maintanence(more frequent updates) than others. (TVL section vs project abstract). Staking terminates for the current *maintainer* whenever there is a successful challange or when current *maintainer* decides to unstake. There is a time delay of 1 week after unstaking. This is so in order to allow anyone to challange the content and prevent editors from publishing bad content for which they cannot be punished. 
 2. challenge => to challenge a wiki page section *editor* needs to lock *staking amount* in the contract. This mechanism would be similar to UMA challenge rounds in optimistic oracle. 
-	1. challenge created => challenger, locks *staking amount* to create a challenge, specifies the section he is challenging by submitting the updated section content. He needs to provide all the links / resources (if needed) for the voters to make a decision if his challenge is refused and goes to vote. Challenge can be of two types:
+	1. challenge created => challenger, locks *staking amount* to create a challenge, specifies the section he is challenging by submitting the updated section content. He needs to provide all the links / resources (if needed) for the voters to make a decision if his challenge is disputed and goes to vote. Challenge can be of two types:
 		1. without slashing - (small mistakes, content updates) 
-		2. with slashing - (misinformation, serious mistakes that make the content detremental to its consumers, in such case chalenger always become *maintainer*).   
-	2. challenge is live => time in which *maintainer* can refuse it.
-		1.  challenge is accepted (by *maintainer* or if not disputed within the *dispute period*)
+		2. with slashing - (misinformation, serious mistakes that make the content detremental to its consumers). 
+	2. challenge is live => time in which *maintainer* can dispute it.
+		1.  challenge is accepted (explicitly by *maintainer* or if not disputed within the *dispute period*)
 		2.  challenge is disputed by *maintainer* (needs to be done within *dispute period* otherwise it is accepted automatically)
 			1.  Voting begins after *some time*(to be specified) after challenge is disputed. WIK token holders are notified to vote with their WIK tokens to decide. See *Voting* section below. 
-
+- **note:** After every successful challenge, challenger becomes the new *maintainer*
 
 
 ### Challenge
-Every challenge has two parts. 
-1.  submission of new content of section of wiki page
-2.  type of challenge => this is neccessary to determine if current editor needs to be slashed. The challenge could be outdated text, incomplete or slightly incorrect information or missing reference to a particular resource. We want to encourage all changes that improve the system and punish only those which are pontetially harmfull or obviously misleading and degrade the system for the consumers. 
-Types of changes:
-	1.  **small mistakes, content updates** for which challenged party should not be slashed. There needs to be a treshold for how old can data be and still be valid, since various price data are old the moment they are updated. Only data which is outdated for more than a specified time period (e.g. an hour) can be challanged. *maintainer* whose section is challenged because it is  outdated should not be slashed. There also could be different time periods for different sections. e.g. It makes sens for *price* section can be challenged sooner than *abstract* section. 
-		1.  no slashing
+Every challenge contains submission of a new content of wiki page section.
+There are two types of challenges that the challenger needs to choose from:
+- without slashing 
+- with slashing
+This is neccessary to determine if current editor needs to be slashed. The section could be challenged because it is outdated, incomplete or incorrect or missing reference to a particular resource. We want to encourage all changes that improve the system and punish only those which are pontetially harmfull or obviously misleading and degrade the system for the consumers. 
+Types of challenges:
+- without slashing 
+    - **small mistakes, content updates** for which challenged party should not be slashed. There needs to be a treshold for how old can data be and still be valid, since various price data are old the moment they are updated. Only data which is outdated for more than a specified time period (e.g. an hour) can be challanged. *maintainer* whose section is challenged because it is  outdated should not be slashed. There also could be different time periods for different sections. e.g. It makes sens for *price* section can be challenged sooner than *abstract* section. 
+    - consequences:
+		1.  no slashing of *maintainers* deposit
 		2.  loss of future rewards stream
-	2.  incorrect information => big mistakes that should be punished, misleading information, or mistakes that make the content unusable. 
-		1.  slashing
+- with slashing 
+	- **harmfull / misleading information**, big mistakes that should be punished, misleading information, or mistakes that make the content unusable. 
+		1.  slashing of *maintainers* deposit
 		2.  loss of future rewards stream
 
 #### Voting
 Voting takes place every time when these conditions are met: 
 - section is challenged
-- challenge is refused by current editor 
+- challenge is disputed by current editor 
 ##### flow 
 1. section is challenged 
 	1. requirements: 
 		- challenger must lock in required *staking amount*
-2. challange is refused => **Voting is on!**
-This smart contract interaction notifies WIK token holders of the open challange. This could be done via DeFiWiki website or various other channels.
+2. challange is disputed => **Voting is on!**
+This smart contract interaction notifies WIK token holders of the open challange. This could be done via DeFiWiki website or various other communication channels.
 
 - There is one week voting period in which token holder can vote by locking WIK token into the voting contract
-- Every vote is weghted by amount of WIK tokens locked
+- Every vote is weighted by amount of WIK tokens locked
 - Every vote has a winner and a looser(*challenger* vs *maintainer*), winning voters and possibly losing voters
+- **Scenarios**
 	-  **Challenger wins**
 		-  if more than 66% WIK tokens are behind the vote (not 50% to incentivize challengers to challenge clear cases, not something they *might* win)
 		-  **consequences**
 			-  Challenger
 				-  becomes *maintainer* and receives future section rewards stream
 				-  IF slashing challenge 
-					-  receives 50% of section stake 
+					-  receives 50% of section stake, the other 50% is burned.
 			-  challenged *maintainer*
 				-  loss of future section rewards stream
 				-  IF slashing challenge 
