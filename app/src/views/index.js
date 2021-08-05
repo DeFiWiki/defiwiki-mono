@@ -1,0 +1,1 @@
+export {ProtcolCard as default} from "./ProtocolCard";
